@@ -1,0 +1,12 @@
+Aqui está um exemplo simples usando Python com Tkinter, que é fácil de entender e ideal para iniciantes:
+
+[code]
+
+Para fazer com que essa janela abra automaticamente quando você entrar na sessão do Windows, siga estes passos:
+
+Instale o Python (se ainda não o tiver instalado).
+Salve o código acima como “main.py”.
+Crie um atalho para o arquivo “main.py” ou converta-o em um executável usando uma ferramenta como o PyInstaller.
+Pressione Win + R, digite shell:startup e pressione Enter para abrir a pasta de Inicialização do Windows.
+Coloque o atalho (ou o executável) nessa pasta.
+Dessa forma, ao iniciar a sessão do Windows, o Python executará seu script e abrirá a janela do sistema automaticamente.
