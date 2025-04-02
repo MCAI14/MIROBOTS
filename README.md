@@ -5,7 +5,7 @@ Welcome to the MIROBOTS presentation page! This project showcases the new and ev
 ## Project Structure
 
 ```
-mirobots-presentation
+
 ├── assets
 │   ├── css
 │   │   └── styles.css
