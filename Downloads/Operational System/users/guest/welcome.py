@@ -1,5 +1,6 @@
 import tkinter as tk
 import os
+import subprocess  # Adicione esta importação
 
 def open_desktop(janela):
     print("Iniciando ambiente de utilizador CONVIDADO")
@@ -50,21 +51,22 @@ def open_power_options(parent):
     restart_btn.pack(fill="x", pady=5, padx=10)
 
 def shutdown(option):
-    if option == "encerrar":
-        try:
-            os.startfile("shutdown.bat")
-        except Exception as e:
-            print("Erro ao executar shutdown.bat:", e)
-    elif option == "suspender":
-        try:
-            os.system("shutdown /h")
-        except Exception as e:
-            print("Erro ao suspender o computador:", e)
-    elif option == "reiniciar":
-        try:
-            os.startfile("restart.bat")
-        except Exception as e:
-            print("Erro ao executar restart.bat:", e)
+    try:
+        if option == "encerrar":
+            # Execute o arquivo shutdown.bat
+            subprocess.run(["shutdown.bat"], check=True, shell=True)
+        elif option == "suspender":
+            # Use o comando para suspender o computador
+            subprocess.run("shutdown /h", check=True, shell=True)
+        elif option == "reiniciar":
+            # Execute o arquivo restart.bat
+            subprocess.run(["restart.bat"], check=True, shell=True)
+    except FileNotFoundError as e:
+        print(f"Arquivo .bat não encontrado: {e}")
+    except subprocess.CalledProcessError as e:
+        print(f"Erro ao executar o comando: {e}")
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
 
 def abre_jogos(janela):
     print("Abrindo a área de Jogos...")

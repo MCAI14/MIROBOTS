@@ -1,5 +1,33 @@
 import tkinter as tk
+import subprocess
 from start import open_user_selection  # importa a função que cria a tela de utilizadores
+
+def process_command(event):
+    # Obtém o conteúdo da última linha começando no prompt (">> ")
+    linha = terminal.get("insert linestart", "insert lineend")
+    # Remove o prompt e espaços extras para isolar o comando
+    comando = linha.replace(">> ", "", 1).strip()
+    
+    if comando.lower() == "start mirobots":
+        terminal.insert(tk.END, "\nCarregando MIRobots...\n")
+        terminal.see(tk.END)
+        load_mirobots()
+    else:
+        try:
+            # Executa o comando no sistema operacional
+            resultado = subprocess.run(comando, shell=True, text=True, capture_output=True)
+            # Exibe a saída do comando no terminal
+            if resultado.stdout:
+                terminal.insert(tk.END, "\n" + resultado.stdout)
+            if resultado.stderr:
+                terminal.insert(tk.END, "\n" + resultado.stderr)
+        except Exception as e:
+            terminal.insert(tk.END, f"\nErro ao executar o comando: {e}")
+    
+    # Adiciona o prompt novamente
+    terminal.insert(tk.END, "\n>> ")
+    terminal.see(tk.END)
+    return "break"
 
 def load_mirobots():
     # Remove o terminal da janela
@@ -40,25 +68,7 @@ def load_mirobots():
     animate()
     
     # Após 5 segundos, chama a função de escolha de utilizadores
-    splash.after(5000, lambda: open_user_selection(janela, splash))
-
-def process_command(event):
-    # Obtém o conteúdo da última linha começando no prompt (">> ")
-    linha = terminal.get("insert linestart", "insert lineend")
-    # Remove o prompt e espaços extras para isolar o comando
-    comando = linha.replace(">> ", "", 1).strip()
-    
-    if comando.lower() == "start mirobots":
-        terminal.insert(tk.END, "\nCarregando MIRobots...\n")
-        terminal.see(tk.END)
-        load_mirobots()
-    else:
-        # Simula o processamento do comando (apenas ecoa neste exemplo)
-        resposta = f"Executado: {comando}\n"
-        terminal.insert(tk.END, "\n" + resposta + ">> ")
-        terminal.see(tk.END)
-    
-    return "break"
+    splash.after(5000, lambda: open_user_selection(janela, splash))  # Fixed missing parenthesis
 
 # Cria a janela principal em tela cheia
 janela = tk.Tk()
