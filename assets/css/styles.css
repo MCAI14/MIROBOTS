@@ -45,6 +45,21 @@ button:hover {
     background-color: #357ab8;
 }
 
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
 footer {
     text-align: center;
     padding: 20px;
