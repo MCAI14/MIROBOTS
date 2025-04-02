@@ -8,6 +8,11 @@ def process_command(event):
     # Remove o prompt e espaços extras para isolar o comando
     comando = linha.replace(">> ", "", 1).strip()
     
+    if not comando:
+        terminal.insert(tk.END, "\n>> ")
+        terminal.see(tk.END)
+        return "break"
+    
     if comando.lower() == "start mirobots":
         terminal.insert(tk.END, "\nCarregando MIRobots...\n")
         terminal.see(tk.END)
@@ -68,7 +73,7 @@ def load_mirobots():
     animate()
     
     # Após 5 segundos, chama a função de escolha de utilizadores
-    splash.after(5000, lambda: open_user_selection(janela, splash))  # Fixed missing parenthesis
+    splash.after(5000, lambda: open_user_selection(janela, splash))
 
 # Cria a janela principal em tela cheia
 janela = tk.Tk()
@@ -79,8 +84,13 @@ janela.attributes("-fullscreen", True)
 terminal = tk.Text(janela, bg="black", fg="white", insertbackground="white", font=("Consolas", 14))
 terminal.pack(expand=True, fill="both")
 
-# Insere o prompt inicial
-terminal.insert(tk.END, ">> ")
+# Insere os direitos da MIRobots no início do terminal
+direitos = """
+MIRobots Operational System
+Todos os direitos reservados © 2025 MIRobots Corporation & Pixel Corporation.
+Proibida a reprodução total ou parcial sem autorização.
+"""
+terminal.insert(tk.END, direitos + "\n\n>> ")
 
 # Associa o evento de pressionar Enter para processar o comando
 terminal.bind("<Return>", process_command)
