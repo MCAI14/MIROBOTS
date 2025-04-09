@@ -15,7 +15,10 @@ jobs:
       - name: Zip update files
         run: zip -r mirobots-update-1.0.2.zip ./update-files
 
-      - name: Upload to Netlify
+      - name: Deploy to Netlify
         uses: netlify/actions-cli@v1
         with:
           args: deploy --dir=./ --prod
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
