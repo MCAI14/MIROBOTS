@@ -75,7 +75,7 @@ O MIROBOTS é um sistema operativo evolutivo que oferece uma experiência intuit
   O MIROBOTS verifica automaticamente se há atualizações disponíveis e notifica o utilizador para proceder à instalação.
 
 - **Onde encontro suporte?**  
-  Se precisar de ajuda, visite a nossa [página de suporte](https://mirobots.netlify.app/support) ou envie um e-mail para suporte@mirobots.com.
+  Se precisar de ajuda, visite a nossa [página de suporte](https://mirobots.netlify.app/support) ou envie um e-mail para misha14@outlook.pt.
 
 ## Contribuição e Suporte
 
