@@ -47,6 +47,7 @@ translations = {
     }
 }
 
+
 class InstallerWizard(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -60,7 +61,7 @@ class InstallerWizard(tk.Tk):
         self.steps = []
         self.create_steps()
         self.show_step(self.current_step)
-    
+
     def create_steps(self):
         # Limpa passos anteriores (caso esteja reconstruindo após alteração de idioma)
         for widget in self.winfo_children():
@@ -68,13 +69,13 @@ class InstallerWizard(tk.Tk):
                 widget.destroy()
         self.steps = []
         lang = translations[self.language]
-        
+
         # Passo 1: Boas-vindas
         frame1 = ttk.Frame(self)
         ttk.Label(frame1, text=lang["welcome_title"], font=("Arial", 16)).pack(pady=20)
         ttk.Label(frame1, text=lang["welcome_msg"]).pack(pady=10)
         self.steps.append(frame1)
-        
+
         # Passo 2: Configuração Inicial
         frame2 = ttk.Frame(self)
         ttk.Label(frame2, text=lang["config_title"], font=("Arial", 16)).pack(pady=20)
@@ -93,111 +94,109 @@ class InstallerWizard(tk.Tk):
         rb1.pack(pady=2)
         rb2.pack(pady=2)
         self.steps.append(frame2)
-        
-        # Passo 3: Detalhes da Verificação (sem botão "Próximo")
+
+        # Passo 3: Detalhes da Verificação
         frame3 = ttk.Frame(self)
         ttk.Label(frame3, text=lang["details_title"], font=("Arial", 16)).pack(pady=20)
         ttk.Label(frame3, text=lang["details_msg"]).pack(pady=10)
         self.steps.append(frame3)
-        
-        # Passo 4: Verificação de Capacidade (botão Start Check aparece aqui)
+
+        # Passo 4: Verificação de Capacidade (inicia automaticamente)
         frame4 = ttk.Frame(self)
         ttk.Label(frame4, text=lang["capacity_title"], font=("Arial", 16)).pack(pady=20)
         self.capacity_label = ttk.Label(frame4, text=lang["capacity_msg"])
         self.capacity_label.pack(pady=10)
-        self.check_btn = ttk.Button(frame4, text=lang["check_btn"], command=self.run_capacity_check)
-        self.check_btn.pack(pady=10)
+        # Aqui não incluímos o botão "Start Check"
         self.steps.append(frame4)
-        
+
         # Passo 5: Revisão da Instalação
         frame5 = ttk.Frame(self)
         ttk.Label(frame5, text=lang["review_title"], font=("Arial", 16)).pack(pady=20)
         self.review_text = ttk.Label(frame5, text="")
         self.review_text.pack(pady=10)
         self.steps.append(frame5)
-    
+
     def change_language(self, event):
         # Atualiza o idioma e reconstrói os passos para refletir as mudanças
         self.language = self.idioma_cb.get()
         messagebox.showinfo("Idioma Alterado", f"Idioma alterado para: {self.language}")
-        # Atualiza também o valor padrão dos botões de Auto-início (não altera a escolha do usuário se já foi feita)
         self.auto_var.set(translations[self.language]["auto_start_yes"])
-        # Reconstrói os passos para atualizar os textos
         self.create_steps()
         self.show_step(self.current_step)
-    
+
     def show_step(self, index):
-        # Esconde todos os frames de etapas
         for step in self.steps:
             step.pack_forget()
         self.steps[index].pack(fill=tk.BOTH, expand=True)
         self.update_nav()
-        # Se for o passo de revisão, atualiza o resumo
+        if index == 3:
+            # No Passo 4, inicia automaticamente a verificação de capacidade
+            self.run_capacity_check()
         if index == len(self.steps) - 1:
             self.update_review()
-    
+
     def update_nav(self):
-        # Destrói o frame de navegação anterior, se existir
         if hasattr(self, 'nav_frame'):
             self.nav_frame.destroy()
-        
+
         self.nav_frame = ttk.Frame(self)
         self.nav_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=10)
-        
-        # Botão "Anterior" aparece em todos os passos, exceto o primeiro
+
         if self.current_step > 0:
             prev_btn = ttk.Button(self.nav_frame, text="Anterior", command=self.prev_step)
             prev_btn.pack(side=tk.LEFT, padx=20)
-        
-        # Para o passo 3 (detalhes), NÃO exibe o botão "Próximo"
+
+        # No Passo 3, exibe o botão "Iniciar Verificação" (em vez de "Próximo")
         if self.current_step == 2:
+            start_btn = ttk.Button(self.nav_frame, text=translations[self.language]["check_btn"], command=self.start_verification)
+            start_btn.pack(side=tk.RIGHT, padx=20)
             return
-        
-        # Para o passo 4 (verificação de capacidade), só exibe "Próximo" se a verificação foi concluída
+
+        # No Passo 4, exibe "Próximo" somente se a verificação foi concluída
         if self.current_step == 3:
             if self.capacity_result is not None:
                 next_btn = ttk.Button(self.nav_frame, text="Próximo", command=self.next_step)
                 next_btn.pack(side=tk.RIGHT, padx=20)
             return
-        
-        # Em passos intermediários (e no último, que será a revisão), exibe o botão "Próximo"
+
         if self.current_step < len(self.steps) - 1:
             next_btn = ttk.Button(self.nav_frame, text="Próximo", command=self.next_step)
             next_btn.pack(side=tk.RIGHT, padx=20)
         else:
             install_btn = ttk.Button(self.nav_frame, text="Instalar", command=self.install)
             install_btn.pack(side=tk.RIGHT, padx=20)
-    
+
+    def start_verification(self):
+        # Avança para o Passo 4 e inicia a verificação automaticamente
+        self.current_step += 1
+        self.show_step(self.current_step)
+
     def next_step(self):
         if self.current_step < len(self.steps) - 1:
             self.current_step += 1
             self.show_step(self.current_step)
-    
+
     def prev_step(self):
         if self.current_step > 0:
             self.current_step -= 1
             self.show_step(self.current_step)
-    
+
     def run_capacity_check(self):
         lang = translations[self.language]
-        # Inicia a verificação: atualiza o texto e desativa o botão para evitar múltiplos cliques
         self.capacity_label.config(text=lang["capacity_checking"])
-        self.check_btn.config(state="disabled")
         self.update()
         # Simula a verificação com delay de 2 segundos
         self.after(2000, self.finish_capacity_check)
-    
+
     def finish_capacity_check(self):
-        # Simulação: define capacidade como True
-        self.capacity_result = True
+        self.capacity_result = True  # Simulação: capacidade OK
         lang = translations[self.language]
         if self.capacity_result:
             self.capacity_label.config(text=lang["capacity_ok"])
         else:
             self.capacity_label.config(text=lang["capacity_failed"])
-        # Atualiza a navegação para exibir o botão "Próximo"
         self.update_nav()
-    
+
     def update_review(self):
         lang = translations[self.language]
         auto_choice = self.auto_var.get()
@@ -211,13 +210,14 @@ class InstallerWizard(tk.Tk):
         else:
             review_msg += lang["capacity_failed"]
         self.review_text.config(text=review_msg)
-    
+
     def install(self):
         lang = translations[self.language]
         auto_choice = self.auto_var.get()
         messagebox.showinfo("Instalação", lang["installing"].format(language=self.language, auto=auto_choice))
         messagebox.showinfo("Instalação", "MIROBOTS instalado com sucesso!")
         self.destroy()
+
 
 if __name__ == "__main__":
     app = InstallerWizard()
