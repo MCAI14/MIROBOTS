@@ -72,10 +72,9 @@ O MIROBOTS é um sistema operativo evolutivo que oferece uma experiência intuit
   Aceda ao menu de configurações e clique em "Personalização" para ajustar temas e ícones.
 
 - **Como funcionam as atualizações?**  
-  O MIROBOTS verifica automaticamente se há atualizações disponíveis e notifica o utilizador para proceder à instalação.
-
+   Para atulizar, deve encontrar a versão mais recente em "https://mirobots.netlify.app/downloads.html"
 - **Onde encontro suporte?**  
-  Se precisar de ajuda, visite a nossa [página de suporte](https://mirobots.netlify.app/support) ou envie um e-mail para misha14@outlook.pt.
+  Se precisar de ajuda, visite a nossa [página de suporte](https://mirobots.netlify.app/support.html) ou envie um e-mail para misha14@outlook.pt.
 
 ## Contribuição e Suporte
 
