@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+import psutil
 
-# Dicionário de traduções
+# Dicionário de traduções com adição do Espanhol
 translations = {
     "Português": {
         "welcome_title": "Bem-vindo ao MIROBOTS",
@@ -19,10 +20,12 @@ translations = {
         "capacity_ok": "Seu computador está apto para rodar o MIROBOTS.",
         "review_title": "Revisão da Instalação",
         "review_msg": "Revise as configurações selecionadas antes de iniciar a instalação.",
-        "installing": "Iniciando a instalação do MIROBOTS no idioma {language}...\nAuto Início: {auto}",
         "check_btn": "Iniciar Verificação",
         "details_title": "Detalhes da Verificação",
-        "details_msg": "O sistema irá verificar os seguintes requisitos:\n- Processador\n- Memória RAM\n- Espaço em Disco\n- Placa Gráfica"
+        "details_msg": "O sistema irá verificar os seguintes requisitos:\n- Processador\n- Memória RAM\n- Espaço em Disco\n- Placa Gráfica",
+        "report_title": "Relatório da Instalação",
+        "report_msg": "Abaixo estão os detalhes da instalação:\n",
+        "installing": "Instalando MIROBOTS com idioma: {language} e Auto-início: {auto}"
     },
     "Inglês": {
         "welcome_title": "Welcome to MIROBOTS",
@@ -40,10 +43,35 @@ translations = {
         "capacity_ok": "Your computer is capable of running MIROBOTS.",
         "review_title": "Installation Review",
         "review_msg": "Review the selected configurations before starting the installation.",
-        "installing": "Starting MIROBOTS installation in {language}...\nAuto Launch: {auto}",
         "check_btn": "Start Check",
         "details_title": "Verification Details",
-        "details_msg": "The system will check the following requirements:\n- Processor\n- RAM\n- Disk Space\n- Graphics Card"
+        "details_msg": "The system will check the following requirements:\n- Processor\n- RAM\n- Disk Space\n- Graphics Card",
+        "report_title": "Installation Report",
+        "report_msg": "Below are the installation details:\n",
+        "installing": "Installing MIROBOTS with language: {language} and Auto-start: {auto}"
+    },
+    "Espanhol": {
+        "welcome_title": "Bienvenido a MIROBOTS",
+        "welcome_msg": "Este asistente lo guiará a través de la instalación de MIROBOTS.",
+        "config_title": "Configuración Inicial",
+        "config_msg": "Seleccione las configuraciones iniciales, como idioma, zona horaria y opciones avanzadas.",
+        "language_label": "Idioma:",
+        "auto_start_label": "Iniciar MIROBOTS automáticamente al encender la computadora:",
+        "auto_start_yes": "Sí",
+        "auto_start_no": "No",
+        "capacity_title": "Verificación de Capacidad",
+        "capacity_msg": "Verificando si su computadora cumple con los requisitos necesarios...",
+        "capacity_checking": "Verificando...",
+        "capacity_failed": "Su computadora no cumple con la capacidad necesaria.",
+        "capacity_ok": "Su computadora es apta para ejecutar MIROBOTS.",
+        "review_title": "Revisión de la Instalación",
+        "review_msg": "Revise las configuraciones seleccionadas antes de iniciar la instalación.",
+        "check_btn": "Iniciar Verificación",
+        "details_title": "Detalles de la Verificación",
+        "details_msg": "El sistema verificará los siguientes requisitos:\n- Procesador\n- Memoria RAM\n- Espacio en Disco\n- Tarjeta Gráfica",
+        "report_title": "Reporte de la Instalación",
+        "report_msg": "A continuación se muestran los detalles de la instalación:\n",
+        "installing": "Instalando MIROBOTS con idioma: {language} y Auto-arranque: {auto}"
     }
 }
 
@@ -52,12 +80,17 @@ class InstallerWizard(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Assistente de Instalação MIROBOTS")
-        self.geometry("600x400")
+        self.geometry("600x500")
         # Estado inicial
         self.current_step = 0
         self.language = "Português"  # idioma padrão
         self.auto_start = translations[self.language]["auto_start_yes"]  # valor padrão: sim
         self.capacity_result = None  # resultado da verificação de capacidade
+        # Variáveis para armazenar dados reais do sistema
+        self.cpu_count = None
+        self.available_memory = None
+        self.free_disk = None
+        
         self.steps = []
         self.create_steps()
         self.show_step(self.current_step)
@@ -106,7 +139,6 @@ class InstallerWizard(tk.Tk):
         ttk.Label(frame4, text=lang["capacity_title"], font=("Arial", 16)).pack(pady=20)
         self.capacity_label = ttk.Label(frame4, text=lang["capacity_msg"])
         self.capacity_label.pack(pady=10)
-        # Aqui não incluímos o botão "Start Check"
         self.steps.append(frame4)
 
         # Passo 5: Revisão da Instalação
@@ -116,8 +148,14 @@ class InstallerWizard(tk.Tk):
         self.review_text.pack(pady=10)
         self.steps.append(frame5)
 
+        # Passo 6: Relatório da Instalação (passo final)
+        frame6 = ttk.Frame(self)
+        ttk.Label(frame6, text=lang["report_title"], font=("Arial", 16)).pack(pady=20)
+        self.report_text = ttk.Label(frame6, text="", justify=tk.LEFT)
+        self.report_text.pack(pady=10)
+        self.steps.append(frame6)
+
     def change_language(self, event):
-        # Atualiza o idioma e reconstrói os passos para refletir as mudanças
         self.language = self.idioma_cb.get()
         messagebox.showinfo("Idioma Alterado", f"Idioma alterado para: {self.language}")
         self.auto_var.set(translations[self.language]["auto_start_yes"])
@@ -132,7 +170,9 @@ class InstallerWizard(tk.Tk):
         if index == 3:
             # No Passo 4, inicia automaticamente a verificação de capacidade
             self.run_capacity_check()
-        if index == len(self.steps) - 1:
+        if index == 5:
+            self.update_report()
+        if index == 4:
             self.update_review()
 
     def update_nav(self):
@@ -159,12 +199,14 @@ class InstallerWizard(tk.Tk):
                 next_btn.pack(side=tk.RIGHT, padx=20)
             return
 
+        # Nos demais passos, exibindo "Próximo" ou "Finalizar" no último passo (Passo 6)
         if self.current_step < len(self.steps) - 1:
-            next_btn = ttk.Button(self.nav_frame, text="Próximo", command=self.next_step)
+            btn_text = "Próximo" if self.current_step != len(self.steps) - 1 else "Finalizar"
+            next_btn = ttk.Button(self.nav_frame, text=btn_text, command=self.next_step if self.current_step < len(self.steps) - 1 else self.install)
             next_btn.pack(side=tk.RIGHT, padx=20)
         else:
-            install_btn = ttk.Button(self.nav_frame, text="Instalar", command=self.install)
-            install_btn.pack(side=tk.RIGHT, padx=20)
+            finish_btn = ttk.Button(self.nav_frame, text="Finalizar", command=self.install)
+            finish_btn.pack(side=tk.RIGHT, padx=20)
 
     def start_verification(self):
         # Avança para o Passo 4 e inicia a verificação automaticamente
@@ -185,11 +227,28 @@ class InstallerWizard(tk.Tk):
         lang = translations[self.language]
         self.capacity_label.config(text=lang["capacity_checking"])
         self.update()
-        # Simula a verificação com delay de 2 segundos
+        # Simula a verificação com delay de 2 segundos e depois chama finish_capacity_check
         self.after(2000, self.finish_capacity_check)
 
     def finish_capacity_check(self):
-        self.capacity_result = True  # Simulação: capacidade OK
+        # Define os requisitos mínimos
+        min_cpu_count = 2
+        min_memory = 4 * 1024 * 1024 * 1024  # 4GB em bytes
+        min_disk = 20 * 1024 * 1024 * 1024     # 20GB em bytes
+
+        # Obter dados reais do sistema
+        self.cpu_count = psutil.cpu_count(logical=True)
+        mem = psutil.virtual_memory()
+        self.available_memory = mem.available
+        disk = psutil.disk_usage('/')
+        self.free_disk = disk.free
+
+        # Verifica se os requisitos são atendidos
+        if self.cpu_count >= min_cpu_count and self.available_memory >= min_memory and self.free_disk >= min_disk:
+            self.capacity_result = True
+        else:
+            self.capacity_result = False
+
         lang = translations[self.language]
         if self.capacity_result:
             self.capacity_label.config(text=lang["capacity_ok"])
@@ -210,6 +269,23 @@ class InstallerWizard(tk.Tk):
         else:
             review_msg += lang["capacity_failed"]
         self.review_text.config(text=review_msg)
+
+    def update_report(self):
+        lang = translations[self.language]
+        auto_choice = self.auto_var.get()
+        # Converte valores para GB arredondados (se estiverem disponíveis)
+        cpu_info = f"CPU(s): {self.cpu_count}"
+        mem_gb = f"{self.available_memory / (1024**3):.2f} GB" if self.available_memory else "N/A"
+        disk_gb = f"{self.free_disk / (1024**3):.2f} GB" if self.free_disk else "N/A"
+        report_details = (
+            f"{lang['report_msg']}\n"
+            f"Idioma: {self.language}\n"
+            f"{lang['auto_start_label']} {auto_choice}\n"
+            f"{cpu_info}\n"
+            f"Memória Disponível: {mem_gb}\n"
+            f"Espaço em Disco Livre: {disk_gb}\n"
+        )
+        self.report_text.config(text=report_details)
 
     def install(self):
         lang = translations[self.language]
