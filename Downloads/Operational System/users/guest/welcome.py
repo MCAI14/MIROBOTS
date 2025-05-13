@@ -1,5 +1,13 @@
 import tkinter as tk
 import subprocess
+import sys
+import os
+
+# Dynamically add the parent directory of "Programas" to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
+
+from Programas.Default.Apps.Definições import open_definicoes
+from Programas.Default.Apps.Calculadora import open_calculadora
 
 def open_desktop(janela):
     print("Iniciando ambiente de utilizador CONVIDADO")
@@ -36,12 +44,16 @@ def add_power_button(desktop):
 
 def add_taskbar_icons(desktop):
     # Adiciona ícones na barra de tarefas
-    icons = ["icon1.png", "icon2.png", "icon3.png", "icon4.png", "icon5.png", "icon6.png"]
+    icons = [
+        ("Definições.png", open_definicoes),
+        ("Calculadora.png", open_calculadora)
+    ]
     x_offset = 50
-    for icon in icons:
+    for icon, command in icons:
         try:
             icon_img = tk.PhotoImage(file=icon)
-            icon_button = tk.Button(desktop, image=icon_img, bg="deepskyblue", borderwidth=0)
+            icon_button = tk.Button(desktop, image=icon_img, bg="deepskyblue", borderwidth=0, 
+                                     command=lambda cmd=command: cmd(desktop.master))
             icon_button.image = icon_img  # Mantém a referência para não ser coletada
             icon_button.place(x=x_offset, y=450)  # Ajuste a posição conforme necessário
             x_offset += 70
