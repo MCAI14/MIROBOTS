@@ -5,6 +5,7 @@ import os
 
 # Dynamically add the parent directory of "Programas" to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), ".")))
 
 from Programas.Default.Apps.Definições import open_definicoes
 from Programas.Default.Apps.Calculadora import open_calculadora
