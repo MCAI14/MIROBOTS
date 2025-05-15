@@ -38,7 +38,7 @@ def add_main_labels(desktop):
     label3.place(x=400, y=50)
 
 def add_power_button(desktop):
-    power_img = tk.PhotoImage(file=os.path.join(ICONES_DIR, "Ligar-Desligar.png"))
+    power_img = tk.PhotoImage(file=os.path.join(ICONES_DIR, "Ligar-Desligar.ico"))
     power_button = tk.Button(desktop, image=power_img, bg="deepskyblue", borderwidth=0,
                               command=lambda: open_power_options(desktop))
     power_button.image = power_img  # Mantém a referência para não ser coletada
@@ -46,8 +46,8 @@ def add_power_button(desktop):
 
 def add_taskbar_icons(desktop):
     icons = [
-        (os.path.join(ICONES_DIR, "Definições.png"), open_definicoes),
-        (os.path.join(ICONES_DIR, "Calculadora.png"), open_calculadora)
+        (os.path.join(ICONES_DIR, "Definições.ico"), open_definicoes),
+        (os.path.join(ICONES_DIR, "Calculadora.ico"), open_calculadora)
     ]
     x_offset = 50
     for icon, command in icons:
