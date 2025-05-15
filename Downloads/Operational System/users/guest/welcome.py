@@ -54,17 +54,37 @@ def add_power_button(taskbar):
     power_button.pack(side="left", padx=10)
 
 def add_taskbar_icons(taskbar):
+    # Primeiro o botão de power
+    try:
+        power_img = tk.PhotoImage(file=os.path.join(ICONES_DIR, "Ligar-Desligar.png"))
+        power_button = tk.Button(taskbar, image=power_img, bg="#222222", borderwidth=0,
+                                 command=lambda: open_power_options(taskbar.master))
+        power_button.image = power_img
+        power_button.pack(side="left", padx=10)
+    except Exception as e:
+        print(f"Erro ao carregar o ícone de power: {e}")
+
+    # Depois o botão de pesquisa
+    try:
+        search_img = tk.PhotoImage(file=os.path.join(ICONES_DIR, "Pesquisar.png"))
+        search_button = tk.Button(taskbar, image=search_img, bg="#222222", borderwidth=0,
+                                  command=lambda: open_pesquisa(taskbar.master))
+        search_button.image = search_img
+        search_button.pack(side="left", padx=10)
+    except Exception as e:
+        print(f"Erro ao carregar o ícone de pesquisa: {e}")
+
+    # Depois outros ícones (exemplo: Definições, Calculadora)
     icons = [
-        (os.path.join(ICONES_DIR, "Pesquisar.png"), open_pesquisa),
         (os.path.join(ICONES_DIR, "Definições.png"), open_definicoes),
         (os.path.join(ICONES_DIR, "Calculadora.png"), open_calculadora)
     ]
     for icon, command in icons:
         try:
             icon_img = tk.PhotoImage(file=icon)
-            icon_button = tk.Button(taskbar, image=icon_img, bg="#222222", borderwidth=0, 
+            icon_button = tk.Button(taskbar, image=icon_img, bg="#222222", borderwidth=0,
                                      command=lambda cmd=command: cmd(taskbar.master))
-            icon_button.image = icon_img  # Mantém a referência para não ser coletada
+            icon_button.image = icon_img
             icon_button.pack(side="left", padx=10)
         except Exception as e:
             print(f"Erro ao carregar o ícone {icon}: {e}")
