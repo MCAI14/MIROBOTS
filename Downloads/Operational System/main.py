@@ -1,6 +1,10 @@
 import tkinter as tk
 import subprocess
+import os
 from start import open_user_selection  # importa a função que cria a tela de utilizadores
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+ICONES_DIR = os.path.join(BASE_DIR, "icones")
 
 def process_command(event):
     # Obtém o conteúdo da última linha começando no prompt (">> ")
@@ -44,7 +48,7 @@ def load_mirobots():
     
     # Tenta carregar a imagem do ícone personalizado
     try:
-        icon_image = tk.PhotoImage(file="iconstart.png")
+        icon_image = tk.PhotoImage(file=os.path.join(ICONES_DIR, "iconstart.png"))
     except Exception as e:
         print("Erro ao carregar a imagem do ícone:", e)
         icon_image = None
