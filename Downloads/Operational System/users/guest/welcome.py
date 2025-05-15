@@ -9,6 +9,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.
 from Programas.Default.Apps.Definições import open_definicoes
 from Programas.Default.Apps.Calculadora import open_calculadora
 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
+ICONES_DIR = os.path.join(BASE_DIR, "icones")
+
 def open_desktop(janela):
     print("Iniciando ambiente de utilizador CONVIDADO")
     # Cria um frame que simula o ambiente de trabalho
@@ -35,18 +38,16 @@ def add_main_labels(desktop):
     label3.place(x=400, y=50)
 
 def add_power_button(desktop):
-    # Adiciona o botão de desligar no canto inferior esquerdo
-    power_img = tk.PhotoImage(file="Ligar-Desligar.png")
+    power_img = tk.PhotoImage(file=os.path.join(ICONES_DIR, "Ligar-Desligar.png"))
     power_button = tk.Button(desktop, image=power_img, bg="deepskyblue", borderwidth=0,
                               command=lambda: open_power_options(desktop))
     power_button.image = power_img  # Mantém a referência para não ser coletada
     power_button.place(relx=0.0, rely=1.0, anchor="sw", x=10, y=-10)
 
 def add_taskbar_icons(desktop):
-    # Adiciona ícones na barra de tarefas
     icons = [
-        ("Definições.png", open_definicoes),
-        ("Calculadora.png", open_calculadora)
+        (os.path.join(ICONES_DIR, "Definições.png"), open_definicoes),
+        (os.path.join(ICONES_DIR, "Calculadora.png"), open_calculadora)
     ]
     x_offset = 50
     for icon, command in icons:
