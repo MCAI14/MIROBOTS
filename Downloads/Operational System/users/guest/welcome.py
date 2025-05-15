@@ -15,14 +15,22 @@ ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")
 
 def open_desktop(janela):
     print("Iniciando ambiente de utilizador CONVIDADO")
-    # Cria um frame que simula o ambiente de trabalho
+    # Frame do ambiente de trabalho
     desktop = tk.Frame(janela, bg="deepskyblue")
     desktop.pack(expand=True, fill="both")
-    
-    # Adiciona os elementos principais no desktop
+
+    # Frame da barra de tarefas (em baixo)
+    taskbar = tk.Frame(desktop, bg="#222222", height=60)
+    taskbar.pack(side="bottom", fill="x")
+
+    # Adiciona elementos ao desktop (menos a barra de tarefas)
     add_main_labels(desktop)
-    add_power_button(desktop)
-    add_taskbar_icons(desktop)
+
+    # Adiciona botões/ícones à barra de tarefas
+    add_taskbar_icons(taskbar)
+
+    # Botão de energia na barra de tarefas (exemplo)
+    add_power_button(taskbar)
 
 def add_main_labels(desktop):
     # Adiciona os textos principais no desktop
@@ -38,27 +46,26 @@ def add_main_labels(desktop):
                       font=("Consolas", 16, "bold"), bg="deepskyblue", fg="magenta")
     label3.place(x=400, y=50)
 
-def add_power_button(desktop):
+def add_power_button(taskbar):
     power_img = tk.PhotoImage(file=os.path.join(ICONES_DIR, "Ligar-Desligar.png"))
-    power_button = tk.Button(desktop, image=power_img, bg="deepskyblue", borderwidth=0,
-                              command=lambda: open_power_options(desktop))
+    power_button = tk.Button(taskbar, image=power_img, bg="#222222", borderwidth=0,
+                              command=lambda: open_power_options(taskbar.master))
     power_button.image = power_img  # Mantém a referência para não ser coletada
-    power_button.place(relx=0.0, rely=1.0, anchor="sw", x=10, y=-10)
+    power_button.pack(side="left", padx=10)
 
-def add_taskbar_icons(desktop):
+def add_taskbar_icons(taskbar):
     icons = [
+        (os.path.join(ICONES_DIR, "Pesquisar.png"), open_pesquisa),
         (os.path.join(ICONES_DIR, "Definições.png"), open_definicoes),
         (os.path.join(ICONES_DIR, "Calculadora.png"), open_calculadora)
     ]
-    x_offset = 50
     for icon, command in icons:
         try:
             icon_img = tk.PhotoImage(file=icon)
-            icon_button = tk.Button(desktop, image=icon_img, bg="deepskyblue", borderwidth=0, 
-                                     command=lambda cmd=command: cmd(desktop.master))
+            icon_button = tk.Button(taskbar, image=icon_img, bg="#222222", borderwidth=0, 
+                                     command=lambda cmd=command: cmd(taskbar.master))
             icon_button.image = icon_img  # Mantém a referência para não ser coletada
-            icon_button.place(x=x_offset, y=450)  # Ajuste a posição conforme necessário
-            x_offset += 70
+            icon_button.pack(side="left", padx=10)
         except Exception as e:
             print(f"Erro ao carregar o ícone {icon}: {e}")
 
@@ -93,3 +100,12 @@ def shutdown(option):
             subprocess.run("shutdown /r /t 0", shell=True, check=True)
     except Exception as e:
         print(f"Erro ao executar o comando de energia: {e}")
+
+def open_pesquisa(parent):
+    # Exemplo: abre uma janela de pesquisa (podes adaptar)
+    pesquisa_win = tk.Toplevel(parent)
+    pesquisa_win.title("Pesquisar")
+    pesquisa_win.geometry("300x100+850+200")
+    pesquisa_win.config(bg="white")
+    entry = tk.Entry(pesquisa_win, font=("Consolas", 14))
+    entry.pack(pady=20, padx=20, fill="x")
