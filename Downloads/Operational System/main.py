@@ -3,8 +3,8 @@ import subprocess
 import os
 from start import open_user_selection  # importa a função que cria a tela de utilizadores
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-ICONES_DIR = os.path.join(BASE_DIR, "icones")
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")
 
 def process_command(event):
     # Obtém o conteúdo da última linha começando no prompt (">> ")
