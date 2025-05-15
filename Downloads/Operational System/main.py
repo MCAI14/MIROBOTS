@@ -6,6 +6,19 @@ from start import open_user_selection  # importa a função que cria a tela de u
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
 ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")
 
+# Cria a janela principal em tela cheia
+janela = tk.Tk()
+janela.title("Terminal")
+janela.attributes("-fullscreen", True)
+
+# Tenta definir o ícone da janela principal
+try:
+    icon_path = os.path.join(ICONES_DIR, "iconstart.png")
+    icon_img = tk.PhotoImage(file=icon_path)
+    janela.iconphoto(True, icon_img)
+except Exception as e:
+    print("Erro ao definir o ícone da janela:", e)
+
 def process_command(event):
     # Obtém o conteúdo da última linha começando no prompt (">> ")
     linha = terminal.get("insert linestart", "insert lineend")
@@ -78,11 +91,6 @@ def load_mirobots():
     
     # Após 5 segundos, chama a função de escolha de utilizadores
     splash.after(5000, lambda: open_user_selection(janela, splash))
-
-# Cria a janela principal em tela cheia
-janela = tk.Tk()
-janela.title("Terminal")
-janela.attributes("-fullscreen", True)
 
 # Cria o widget Text que simula o terminal
 terminal = tk.Text(janela, bg="black", fg="white", insertbackground="white", font=("Consolas", 14))
