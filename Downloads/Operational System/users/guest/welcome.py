@@ -9,6 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), ".")))
 
 from Programas.Default.Apps.Definições import open_definicoes
 from Programas.Default.Apps.Calculadora import open_calculadora
+from Programas.Default.Apps.EditorTexto import open_editor_texto
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
 ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")
@@ -73,7 +74,8 @@ def add_taskbar_icons(taskbar):
 
     icons = [
         (os.path.join(ICONES_DIR, "Definições.png"), open_definicoes),
-        (os.path.join(ICONES_DIR, "Calculadora.png"), open_calculadora)
+        (os.path.join(ICONES_DIR, "Calculadora.png"), open_calculadora),
+        (os.path.join(ICONES_DIR, "EditorTexto.png"), open_editor_texto)
     ]
     for icon, command in icons:
         try:
