@@ -17,9 +17,9 @@ def open_editor_texto(parent):
             try:
                 with open(file_path, "w", encoding="utf-8") as f:
                     f.write(text_area.get("1.0", tk.END))
-                messagebox.showinfo("Sucesso", "Ficheiro guardado com sucesso!")
+                messagebox.showinfo("Sucesso", "Ficheiro guardado com sucesso!", parent=editor_win)
             except Exception as e:
-                messagebox.showerror("Erro", f"Não foi possível guardar: {e}")
+                messagebox.showerror("Erro", f"Não foi possível guardar: {e}", parent=editor_win)
 
     def abrir():
         file_path = filedialog.askopenfilename(filetypes=[("Ficheiros de Texto", "*.txt")])
@@ -29,7 +29,7 @@ def open_editor_texto(parent):
                     text_area.delete("1.0", tk.END)
                     text_area.insert(tk.END, f.read())
             except Exception as e:
-                messagebox.showerror("Erro", f"Não foi possível abrir: {e}")
+                messagebox.showerror("Erro", f"Não foi possível abrir: {e}", parent=editor_win)
 
     btn_frame = tk.Frame(editor_win, bg="white")
     btn_frame.pack(fill="x", padx=10, pady=5)
