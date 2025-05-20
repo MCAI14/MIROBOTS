@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), ".")))
 from Programas.Default.Apps.Definições import open_definicoes
 from Programas.Default.Apps.Calculadora import open_calculadora
 from Programas.Default.Apps.EditorTexto import open_editor_texto
-from Programas.Default.Apps.VSCode import open_vscode
+from Programas.Default.Apps.CodePode import open_vscode
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
 ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")

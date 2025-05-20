@@ -2,14 +2,14 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import os
 
-def open_vscode(parent):
+def open_codepode(parent):
     win = tk.Toplevel(parent)
-    win.title("MIROBOTS Code")
+    win.title("MIROBOTS CodePode")
     win.geometry("900x600+400+100")
     win.config(bg="white")
 
     # Ícone (opcional)
-    icon_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "Operational System", "icones", "VSCode.png")
+    icon_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "Operational System", "icones", "CodePode.png")
     try:
         icon_img = tk.PhotoImage(file=icon_path)
         win.iconphoto(True, icon_img)
@@ -88,6 +88,6 @@ def open_vscode(parent):
     btn_folder = tk.Button(sidebar, text="Abrir Pasta", command=open_folder, bg="#444", fg="white")
     btn_folder.pack(fill="x", padx=5, pady=5)
 
-    # Botão para fechar o VSCode
+    # Botão para fechar o CodePode
     btn_fechar = tk.Button(sidebar, text="Fechar", command=win.destroy, bg="#444", fg="white")
     btn_fechar.pack(fill="x", padx=5, pady=5)
