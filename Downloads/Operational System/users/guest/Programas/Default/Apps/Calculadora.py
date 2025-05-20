@@ -9,6 +9,13 @@ ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")
 def open_calculadora(parent, fullscreen=False):
     calc_win = tk.Toplevel(parent)
     calc_win.title("Calculadora Científica")
+    icon_path = os.path.join(ICONES_DIR, "Calculadora.png")
+    try:
+        icon_img = tk.PhotoImage(file=icon_path)
+        calc_win.iconphoto(True, icon_img)
+        calc_win._icon_img = icon_img  # Mantém referência!
+    except Exception as e:
+        print("Erro ao definir o ícone da calculadora:", e)
     if fullscreen:
         calc_win.geometry("700x520+400+100")
     else:

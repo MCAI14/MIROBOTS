@@ -9,6 +9,14 @@ def open_definicoes(parent):
     # Cria uma nova janela (Toplevel)
     def_win = tk.Toplevel(parent)
     def_win.title("Definições")
+    icon_path = os.path.join(ICONES_DIR, "Definições.png")
+    try:
+        icon_img = tk.PhotoImage(file=icon_path)
+        def_win.iconphoto(True, icon_img)
+        def_win._icon_img = icon_img
+    except Exception as e:
+        print("Erro ao definir o ícone das definições:", e)
+
     def_win.geometry("400x250+850+200")
     def_win.config(bg="white")
 
