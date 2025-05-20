@@ -29,9 +29,6 @@ def open_desktop(janela):
     # Adiciona botões/ícones à barra de tarefas
     add_taskbar_icons(taskbar)
 
-    # Botão de energia na barra de tarefas (exemplo)
-    add_power_button(taskbar)
-
 def add_main_labels(desktop):
     # Adiciona os textos principais no desktop
     label1 = tk.Label(desktop, text="Divirta-se com esta versão!", font=("Consolas", 16, "bold"), 
