@@ -1,15 +1,57 @@
 import tkinter as tk
-import subprocess
 import os
+import sys
+
 from start import open_user_selection  # importa a função que cria a tela de utilizadores
-from Programas.Default.Apps.Definições import open_definicoes
-from Programas.Default.Apps.Calculadora import open_calculadora
-from Programas.Default.Apps.EditorTexto import open_editor_texto
+
+# Adiciona o diretório onde está a pasta Programas ao sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "users", "guest")))
+
+# Tenta importar os módulos dos programas, mas ignora se não existirem (para evitar erro de importação)
+try:
+    from Programas.Default.Apps.Definições import open_definicoes
+except ImportError:
+    def open_definicoes(janela): pass
+
+try:
+    from Programas.Default.Apps.Calculadora import open_calculadora
+except ImportError:
+    def open_calculadora(janela): pass
+
+try:
+    from Programas.Default.Apps.EditorTexto import open_editor_texto
+except ImportError:
+    def open_editor_texto(janela): pass
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 ICONES_DIR = os.path.join(BASE_DIR, "icones")
 
-def process_command(event):
+# Cria a janela principal em tela cheia
+janela = tk.Tk()
+janela.title("Terminal")
+janela.attributes("-fullscreen", True)
+
+# Tenta definir o ícone da janela principal
+try:
+    icon_path = os.path.join(ICONES_DIR, "iconstart.png")
+    icon_img = tk.PhotoImage(file=icon_path)
+    janela.iconphoto(True, icon_img)
+except Exception as e:
+    print("Erro ao definir o ícone da janela:", e)
+
+# Cria o widget Text que simula o terminal
+terminal = tk.Text(janela, bg="black", fg="white", insertbackground="white", font=("Consolas", 14))
+terminal.pack(expand=True, fill="both")
+
+# Insere os direitos da MIRobots no início do terminal
+direitos = """
+MIRobots Operational System
+Todos os direitos reservados © 2025 MIRobots Corporation & Pixel Corporation.
+Proibida a reprodução total ou parcial sem autorização.
+"""
+terminal.insert(tk.END, direitos + "\n\n>> ")
+
+def process_command(event=None):
     # Obtém o conteúdo da última linha começando no prompt (">> ")
     linha = terminal.get("insert linestart", "insert lineend")
     # Remove o prompt e espaços extras para isolar o comando
@@ -48,6 +90,8 @@ limpar              - Limpa o terminal
 ajuda               - Mostra esta ajuda
 shutdown            - Desliga o computador
 reiniciar           - Reinicia o computador
+
+Também pode escrever comandos do Windows, como: dir, cls, echo, ping, etc.
 """)
     elif comando == "shutdown":
         terminal.insert(tk.END, "\nA desligar o computador...\n")
@@ -128,23 +172,6 @@ def load_mirobots():
     
     # Após 5 segundos, chama a função de escolha de utilizadores
     splash.after(5000, lambda: open_user_selection(janela, splash))
-
-# Cria a janela principal em tela cheia
-janela = tk.Tk()
-janela.title("Terminal")
-janela.attributes("-fullscreen", True)
-
-# Cria o widget Text que simula o terminal
-terminal = tk.Text(janela, bg="black", fg="white", insertbackground="white", font=("Consolas", 14))
-terminal.pack(expand=True, fill="both")
-
-# Insere os direitos da MIRobots no início do terminal
-direitos = """
-MIRobots Operational System
-Todos os direitos reservados © 2025 MIRobots Corporation & Pixel Corporation.
-Proibida a reprodução total ou parcial sem autorização.
-"""
-terminal.insert(tk.END, direitos + "\n\n>> ")
 
 # Associa o evento de pressionar Enter para processar o comando
 terminal.bind("<Return>", process_command)
