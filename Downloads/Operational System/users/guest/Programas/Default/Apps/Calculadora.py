@@ -6,14 +6,32 @@ import math
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
 ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")
 
-def open_calculadora(parent):
+def open_calculadora(parent, fullscreen=False):
     calc_win = tk.Toplevel(parent)
     calc_win.title("Calculadora Científica")
-    calc_win.geometry("420x520+900+200")
+    if fullscreen:
+        calc_win.geometry("700x520+400+100")
+    else:
+        calc_win.geometry("420x520+900+200")
     calc_win.config(bg="white")
 
-    frame = tk.Frame(calc_win, bg="white")
-    frame.pack(expand=True, fill="both")
+    main_frame = tk.Frame(calc_win, bg="white")
+    main_frame.pack(expand=True, fill="both")
+
+    # Se fullscreen, adiciona frame para histórico
+    if fullscreen:
+        left_frame = tk.Frame(main_frame, bg="white")
+        left_frame.pack(side="left", fill="both", expand=True)
+        right_frame = tk.Frame(main_frame, bg="#f5f5f5", width=250)
+        right_frame.pack(side="right", fill="y")
+        history_label = tk.Label(right_frame, text="Histórico", font=("Consolas", 14, "bold"), bg="#f5f5f5")
+        history_label.pack(pady=(10, 0))
+        history_box = tk.Text(right_frame, font=("Consolas", 12), bg="#f5f5f5", state="disabled", width=28, height=30)
+        history_box.pack(padx=10, pady=10, fill="y")
+        frame = left_frame
+    else:
+        frame = main_frame
+        history_box = None
 
     entry = tk.Entry(frame, font=("Consolas", 18), justify="right", bd=3, relief="sunken")
     entry.pack(pady=15, padx=10, fill="x")
@@ -52,6 +70,11 @@ def open_calculadora(parent):
             resultado = eval(expr, safe_dict)
             entry.delete(0, tk.END)
             entry.insert(0, str(resultado))
+            if history_box:
+                history_box.config(state="normal")
+                history_box.insert(tk.END, f"{expr} = {resultado}\n")
+                history_box.see(tk.END)
+                history_box.config(state="disabled")
         except Exception:
             entry.delete(0, tk.END)
             entry.insert(0, "Erro")
