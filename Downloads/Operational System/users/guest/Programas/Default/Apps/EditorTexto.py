@@ -11,8 +11,11 @@ def open_editor_texto(parent):
     text_area.pack(expand=True, fill="both", padx=10, pady=10)
 
     def guardar():
-        file_path = filedialog.asksaveasfilename(defaultextension=".txt",
-                                                 filetypes=[("Ficheiros de Texto", "*.txt")])
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".txt",
+            filetypes=[("Ficheiros de Texto", "*.txt")],
+            parent=editor_win
+        )
         if file_path:
             try:
                 with open(file_path, "w", encoding="utf-8") as f:
@@ -22,7 +25,10 @@ def open_editor_texto(parent):
                 messagebox.showerror("Erro", f"Não foi possível guardar: {e}", parent=editor_win)
 
     def abrir():
-        file_path = filedialog.askopenfilename(filetypes=[("Ficheiros de Texto", "*.txt")])
+        file_path = filedialog.askopenfilename(
+            filetypes=[("Ficheiros de Texto", "*.txt")],
+            parent=editor_win
+        )
         if file_path:
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
