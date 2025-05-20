@@ -88,25 +88,48 @@ def add_taskbar_icons(taskbar):
             print(f"Erro ao carregar o ícone {icon}: {e}")
 
 def open_power_options(parent):
-    # Cria uma janela (Toplevel) separada para as opções de energia
-    options_win = tk.Toplevel(parent)
-    options_win.title("Opções de Energia")
-    options_win.geometry("200x200+800+100")
-    options_win.config(bg="lightgray")
-    
-    # Botão para "Encerrar" (executa um .bat)
-    shutdown_btn = tk.Button(options_win, text="Encerrar", font=("Consolas", 14),
-                             command=lambda: shutdown("encerrar"))
-    # Botão para "Suspender" (suspende o computador)
-    suspend_btn = tk.Button(options_win, text="Suspender", font=("Consolas", 14),
-                            command=lambda: shutdown("suspender"))
-    # Botão para "Reiniciar" (reinicia o computador)
-    restart_btn = tk.Button(options_win, text="Reiniciar", font=("Consolas", 14),
-                            command=lambda: shutdown("reiniciar"))
-    
-    shutdown_btn.pack(fill="x", pady=5, padx=10)
-    suspend_btn.pack(fill="x", pady=5, padx=10)
-    restart_btn.pack(fill="x", pady=5, padx=10)
+    power_win = tk.Toplevel(parent)
+    power_win.title("Opções de Energia")
+    icon_path = os.path.join(ICONES_DIR, "Ligar-Desligar.png")
+    try:
+        icon_img = tk.PhotoImage(file=icon_path)
+        power_win.iconphoto(True, icon_img)
+        power_win._icon_img = icon_img
+    except Exception as e:
+        print("Erro ao definir o ícone de energia:", e)
+
+    power_win.geometry("320x180+900+300")
+    power_win.config(bg="white")
+
+    label = tk.Label(power_win, text="O que pretende fazer?", font=("Consolas", 16, "bold"), bg="white")
+    label.pack(pady=(20, 10))
+
+    btn_frame = tk.Frame(power_win, bg="white")
+    btn_frame.pack(pady=10)
+
+    def encerrar():
+        power_win.destroy()
+        subprocess.run("shutdown /s /t 0", shell=True)
+
+    def reiniciar():
+        power_win.destroy()
+        subprocess.run("shutdown /r /t 0", shell=True)
+
+    def suspender():
+        power_win.destroy()
+        subprocess.run("rundll32.exe powrprof.dll,SetSuspendState 0,1,0", shell=True)
+
+    btn_encerrar = tk.Button(btn_frame, text="Encerrar", font=("Consolas", 12), width=10, command=encerrar, bg="#ff5555", fg="white")
+    btn_encerrar.grid(row=0, column=0, padx=10)
+
+    btn_reiniciar = tk.Button(btn_frame, text="Reiniciar", font=("Consolas", 12), width=10, command=reiniciar, bg="#ffaa00", fg="white")
+    btn_reiniciar.grid(row=0, column=1, padx=10)
+
+    btn_suspender = tk.Button(btn_frame, text="Suspender", font=("Consolas", 12), width=10, command=suspender, bg="#55aaff", fg="white")
+    btn_suspender.grid(row=0, column=2, padx=10)
+
+    btn_cancelar = tk.Button(power_win, text="Cancelar", font=("Consolas", 12), width=10, command=power_win.destroy)
+    btn_cancelar.pack(pady=10)
 
 def shutdown(option):
     try:

@@ -1,9 +1,21 @@
 import tkinter as tk
+import os
 from tkinter import filedialog, messagebox
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")
 
 def open_editor_texto(parent):
     editor_win = tk.Toplevel(parent)
     editor_win.title("Editor de Texto")
+    icon_path = os.path.join(ICONES_DIR, "EditorTexto.png")
+    try:
+        icon_img = tk.PhotoImage(file=icon_path)
+        editor_win.iconphoto(True, icon_img)
+        editor_win._icon_img = icon_img
+    except Exception as e:
+        print("Erro ao definir o ícone do editor de texto:", e)
+
     editor_win.geometry("600x400+800+200")
     editor_win.config(bg="white")
 
