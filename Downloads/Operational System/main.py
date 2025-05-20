@@ -2,6 +2,9 @@ import tkinter as tk
 import subprocess
 import os
 from start import open_user_selection  # importa a função que cria a tela de utilizadores
+from Programas.Default.Apps.Definições import open_definicoes
+from Programas.Default.Apps.Calculadora import open_calculadora
+from Programas.Default.Apps.EditorTexto import open_editor_texto
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 ICONES_DIR = os.path.join(BASE_DIR, "icones")
@@ -10,28 +13,75 @@ def process_command(event):
     # Obtém o conteúdo da última linha começando no prompt (">> ")
     linha = terminal.get("insert linestart", "insert lineend")
     # Remove o prompt e espaços extras para isolar o comando
-    comando = linha.replace(">> ", "", 1).strip()
+    comando = linha.replace(">> ", "", 1).strip().lower()
     
     if not comando:
         terminal.insert(tk.END, "\n>> ")
         terminal.see(tk.END)
         return "break"
     
-    if comando.lower() == "start mirobots":
+    # Comandos personalizados do MIROBOTS
+    if comando == "start mirobots":
         terminal.insert(tk.END, "\nCarregando MIRobots...\n")
         terminal.see(tk.END)
         load_mirobots()
+    elif comando == "start calculadora":
+        open_calculadora(janela)
+        terminal.insert(tk.END, "\nCalculadora aberta.\n")
+    elif comando == "start editor":
+        open_editor_texto(janela)
+        terminal.insert(tk.END, "\nEditor de texto aberto.\n")
+    elif comando == "start definicoes" or comando == "start definições":
+        open_definicoes(janela)
+        terminal.insert(tk.END, "\nDefinições abertas.\n")
+    elif comando == "limpar":
+        terminal.delete("1.0", tk.END)
+        terminal.insert(tk.END, ">> ")
+    elif comando == "ajuda":
+        terminal.insert(tk.END, """
+Comandos disponíveis:
+start mirobots      - Inicia o ambiente gráfico
+start calculadora   - Abre a calculadora
+start editor        - Abre o editor de texto
+start definicoes    - Abre as definições
+limpar              - Limpa o terminal
+ajuda               - Mostra esta ajuda
+shutdown            - Desliga o computador
+reiniciar           - Reinicia o computador
+""")
+    elif comando == "shutdown":
+        terminal.insert(tk.END, "\nA desligar o computador...\n")
+        terminal.see(tk.END)
+        os.system("shutdown /s /t 0")
+    elif comando == "reiniciar":
+        terminal.insert(tk.END, "\nA reiniciar o computador...\n")
+        terminal.see(tk.END)
+        os.system("shutdown /r /t 0")
     else:
-        try:
-            # Executa o comando no sistema operacional
-            resultado = subprocess.run(comando, shell=True, text=True, capture_output=True)
-            # Exibe a saída do comando no terminal
-            if resultado.stdout:
-                terminal.insert(tk.END, "\n" + resultado.stdout)
-            if resultado.stderr:
-                terminal.insert(tk.END, "\n" + resultado.stderr)
-        except Exception as e:
-            terminal.insert(tk.END, f"\nErro ao executar o comando: {e}")
+        # Lista de comandos válidos para sugestão
+        comandos_validos = [
+            "start mirobots",
+            "start calculadora",
+            "start editor",
+            "start definicoes",
+            "start definições",
+            "limpar",
+            "ajuda",
+            "shutdown",
+            "reiniciar"
+        ]
+
+        # Função simples para sugerir comando parecido
+        def sugerir_comando(comando_user):
+            from difflib import get_close_matches
+            sugestao = get_close_matches(comando_user, comandos_validos, n=1)
+            return sugestao[0] if sugestao else None
+
+        sugestao = sugerir_comando(comando)
+        if sugestao:
+            terminal.insert(tk.END, f'\nVocê disse "{comando}". Será que quis dizer "{sugestao}"?\nPara saber os comandos disponíveis, escreva "ajuda".')
+        else:
+            terminal.insert(tk.END, f'\nComando desconhecido: "{comando}". Para saber os comandos disponíveis, escreva "ajuda".')
     
     # Adiciona o prompt novamente
     terminal.insert(tk.END, "\n>> ")
