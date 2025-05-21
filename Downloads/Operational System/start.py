@@ -4,7 +4,7 @@ import json
 import hashlib
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-ICONES_DIR = os.path.join(BASE_DIR, "icones")
+ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")
 USERS_FILE = os.path.join(BASE_DIR, "users.json")
 
 def hash_password(password):
@@ -131,4 +131,14 @@ def open_user_selection(janela, splash):
         tk.Button(btn_frame, text="Suspender", font=("Consolas", 12), width=10, command=suspender, bg="#55aaff", fg="white").grid(row=0, column=2, padx=10)
         tk.Button(power_win, text="Cancelar", font=("Consolas", 12), width=10, command=power_win.destroy).pack(pady=10)
 
-    tk.Button(user_selection_frame, text="Opções de Energia", font=("Consolas", 12), command=open_power_options).pack(pady=5)
+    # Frame para o botão de energia no canto inferior esquerdo
+    power_frame = tk.Frame(user_selection_frame, bg="lightblue")
+    power_frame.pack(side="left", anchor="sw", padx=10, pady=10, fill="y")
+
+    btn_power = tk.Button(
+        power_frame,
+        text="Opções de Energia",
+        font=("Consolas", 12),
+        command=open_power_options
+    )
+    btn_power.pack(side="bottom", anchor="sw")
