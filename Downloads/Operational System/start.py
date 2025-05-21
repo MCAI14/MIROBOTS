@@ -85,7 +85,7 @@ def open_user_selection(janela, splash):
                 return
             users[u] = {"password": hash_password(p), "admin": is_admin.get()}
             save_users(users)
-            user_menu["menu"].add_command(label=u, command=tk._setit(user_var, u))
+            user_menu["menu"].add_command(label=u, command=tk._setit(user_var, u))  # <-- aqui!
             tk.messagebox.showinfo("Sucesso", "Utilizador criado!", parent=create_win)
             create_win.destroy()
 
