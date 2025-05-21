@@ -1,0 +1,10 @@
+{
+  "CONVIDADO": {
+    "password": "e3e1b2e7e6e9e2e7e6e9e2e7e6e9e2e7e6e9e2e7e6e9e2e7e6e9e2e7e6e9e2e7e6e9",
+    "admin": false
+  },
+  "lol": {
+    "password": "07123e1f482356c415f684407a3b8723e10b2cbbc0b8fcd6282c49d37c9c1abc",
+    "admin": true
+  }
+}
