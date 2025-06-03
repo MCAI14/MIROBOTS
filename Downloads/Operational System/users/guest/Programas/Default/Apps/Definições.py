@@ -28,8 +28,8 @@ def open_definicoes(parent):
         icon_img = tk.PhotoImage(file=icon_path)
         def_win.iconphoto(True, icon_img)
         def_win._icon_img = icon_img
-    except Exception as e:
-        print("Erro ao definir o ícone das definições:", e)
+    except Exception:
+        pass
 
     def_win.geometry("1100x650+300+100")
     def_win.config(bg="#f6fcf6")
@@ -88,7 +88,6 @@ def open_definicoes(parent):
     def show_base():
         clear_main()
         tk.Label(main_area, text="Base", font=("Consolas", 22, "bold"), bg="white").pack(anchor="nw", padx=30, pady=(20, 0))
-        # Simulação dos cartões e widgets principais
         cards_frame = tk.Frame(main_area, bg="white")
         cards_frame.pack(anchor="nw", padx=30, pady=20, fill="x")
 
@@ -163,7 +162,6 @@ def open_definicoes(parent):
         tk.Button(win, text="Criar", font=("Consolas", 14), command=criar).pack(pady=10)
 
     # Criar botões do menu lateral dinamicamente
-    btns = []
     for name, emoji in menu_items:
         if name == "Base":
             cmd = show_base
@@ -173,7 +171,6 @@ def open_definicoes(parent):
             cmd = lambda n=name: [clear_main(), tk.Label(main_area, text=n, font=("Consolas", 18, "bold"), bg="white").pack(pady=20)]
         btn = tk.Button(sidebar, text=f"{emoji}  {name}", font=("Consolas", 13), bg="#eaf6ea", relief="flat", anchor="w", command=cmd)
         btn.pack(fill="x", pady=1, padx=5)
-        btns.append(btn)
 
     btn_close = tk.Button(sidebar, text="Fechar", font=("Consolas", 13), bg="#eaf6ea", relief="flat", command=def_win.destroy)
     btn_close.pack(fill="x", pady=20, side="bottom")
