@@ -92,6 +92,9 @@ def add_taskbar_icons(taskbar):
 def open_power_options(parent):
     power_win = tk.Toplevel(parent)
     power_win.title("Opções de Energia")
+    power_win.transient(None)
+    power_win.attributes("-toolwindow", False)
+
     icon_path = os.path.join(ICONES_DIR, "Ligar-Desligar.png")
     try:
         icon_img = tk.PhotoImage(file=icon_path)
@@ -148,6 +151,9 @@ def open_pesquisa(parent):
     # Exemplo: abre uma janela de pesquisa (podes adaptar)
     pesquisa_win = tk.Toplevel(parent)
     pesquisa_win.title("Pesquisar")
+    pesquisa_win.transient(None)
+    pesquisa_win.attributes("-toolwindow", False)
+
     pesquisa_win.geometry("300x100+850+200")
     pesquisa_win.config(bg="white")
     entry = tk.Entry(pesquisa_win, font=("Consolas", 14))

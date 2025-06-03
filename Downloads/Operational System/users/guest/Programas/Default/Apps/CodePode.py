@@ -5,6 +5,8 @@ import os
 def open_codepode(parent):
     win = tk.Toplevel(parent)
     win.title("CodePode")
+    win.transient(None)
+    win.attributes("-toolwindow", False)
     win.geometry("1000x650+300+100")
     win.config(bg="#23272e")
 

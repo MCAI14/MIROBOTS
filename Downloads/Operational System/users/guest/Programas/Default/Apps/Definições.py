@@ -23,6 +23,8 @@ def save_users(users):
 def open_definicoes(parent):
     def_win = tk.Toplevel(parent)
     def_win.title("Definições")
+    def_win.transient(None)
+    def_win.attributes("-toolwindow", False)
     icon_path = os.path.join(ICONES_DIR, "Definições.png")
     try:
         icon_img = tk.PhotoImage(file=icon_path)

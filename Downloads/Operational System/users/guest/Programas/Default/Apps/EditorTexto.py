@@ -8,6 +8,8 @@ ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")
 def open_editor_texto(parent):
     editor_win = tk.Toplevel(parent)
     editor_win.title("Editor de Texto")
+    editor_win.transient(None)
+    editor_win.attributes("-toolwindow", False)
     icon_path = os.path.join(ICONES_DIR, "EditorTexto.png")
     try:
         icon_img = tk.PhotoImage(file=icon_path)

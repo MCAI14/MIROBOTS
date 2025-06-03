@@ -9,6 +9,8 @@ ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")
 def open_calculadora(parent, fullscreen=False):
     calc_win = tk.Toplevel(parent)
     calc_win.title("Calculadora Científica")
+    calc_win.transient(None)
+    calc_win.attributes("-toolwindow", False)
     icon_path = os.path.join(ICONES_DIR, "Calculadora.png")
     try:
         icon_img = tk.PhotoImage(file=icon_path)
