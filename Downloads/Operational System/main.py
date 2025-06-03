@@ -45,32 +45,15 @@ def show_splash():
         icon_label = tk.Label(splash, image=icon_image, bg="black")
         icon_label.image = icon_image
         icon_label.pack(pady=(100, 20))
+    # Se não houver ícone, não mostra nada (nem texto)
 
-    # Spinner estilo Windows 11
-    spinner_canvas = tk.Canvas(splash, width=80, height=80, bg="black", highlightthickness=0)
-    spinner_canvas.pack(pady=(20, 0))
-
-    # Parâmetros do spinner
-    num_dots = 8
-    radius = 28
-    dot_radius = 6
-    dots = []
-    for i in range(num_dots):
-        angle = 2 * 3.14159 * i / num_dots
-        x = 40 + radius * tk.math.cos(angle)
-        y = 40 + radius * tk.math.sin(angle)
-        dot = spinner_canvas.create_oval(
-            x - dot_radius, y - dot_radius, x + dot_radius, y + dot_radius,
-            fill="#444", outline="#444"
-        )
-        dots.append(dot)
-
-    def animate_spinner(step=0):
-        for i in range(num_dots):
-            color = "#09f" if i == step % num_dots else "#444"
-            spinner_canvas.itemconfig(dots[i], fill=color, outline=color)
-        splash.after(100, animate_spinner, step + 1)
-    animate_spinner()
+    spinner_label = tk.Label(splash, text="", font=("Consolas", 24), bg="black", fg="white")
+    spinner_label.pack(pady=(20, 0))
+    spinner_frames = ["|", "/", "-", "\\"]
+    def animate(index=0):
+        spinner_label.config(text=spinner_frames[index % len(spinner_frames)])
+        splash.after(200, animate, index+1)
+    animate()
 
     # Texto no canto inferior esquerdo
     esc_label = tk.Label(
@@ -79,10 +62,12 @@ def show_splash():
     )
     esc_label.place(relx=0.01, rely=0.97, anchor="sw")
 
+    # Função para aceder ao terminal ao pressionar ESC
     def on_esc(event):
         open_terminal(splash)
     splash.bind_all("<Escape>", on_esc)
 
+    # Após 5 segundos, avança para o ambiente gráfico se não clicar em ESC
     splash.after(5000, lambda: open_user_selection(janela, splash))
 
 def open_terminal(splash):
