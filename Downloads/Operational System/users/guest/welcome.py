@@ -21,62 +21,50 @@ open_windows = {}
 def open_desktop(janela):
     print("Iniciando ambiente de utilizador CONVIDADO")
     # Frame do ambiente de trabalho
-    desktop = tk.Frame(janela, bg="deepskyblue")
+    desktop = tk.Frame(janela, bg="#b3e0ff")
     desktop.pack(expand=True, fill="both")
 
-    # Frame da barra de tarefas (em baixo)
-    taskbar = tk.Frame(desktop, bg="#222222", height=60)
-    taskbar.pack(side="bottom", fill="x")
+    # Painel central (widgets/dashboard)
+    dashboard = tk.Frame(desktop, bg="white", bd=0, highlightthickness=0)
+    dashboard.place(relx=0.5, rely=0.45, anchor="center", width=700, height=500)
 
-    # Lista de ícones na barra de tarefas
-    taskbar_icons = {}
+    # Exemplo de widget: Fotos
+    widget_photos = tk.Frame(dashboard, bg="#f7fafd", bd=0, highlightthickness=0)
+    widget_photos.place(x=20, y=20, width=200, height=120)
+    tk.Label(widget_photos, text="Photos", font=("Segoe UI", 12, "bold"), bg="#f7fafd").pack(anchor="nw", padx=10, pady=8)
+    # ...adiciona imagens ou thumbnails...
 
-    def add_taskbar_icon(app_name, icon_path, win_ref):
-        if app_name in taskbar_icons:
-            return  # Já existe
+    # Exemplo de widget: Lembretes
+    widget_reminders = tk.Frame(dashboard, bg="#f7fafd", bd=0, highlightthickness=0)
+    widget_reminders.place(x=240, y=20, width=200, height=120)
+    tk.Label(widget_reminders, text="Reminders", font=("Segoe UI", 12, "bold"), bg="#f7fafd").pack(anchor="nw", padx=10, pady=8)
+    # ...adiciona lembretes...
+
+    # Exemplo de widget: Calendário
+    widget_calendar = tk.Frame(dashboard, bg="#f7fafd", bd=0, highlightthickness=0)
+    widget_calendar.place(x=460, y=20, width=220, height=220)
+    tk.Label(widget_calendar, text="Calendar", font=("Segoe UI", 12, "bold"), bg="#f7fafd").pack(anchor="nw", padx=10, pady=8)
+    # ...adiciona calendário...
+
+    # Exemplo de widget: Performance
+    widget_perf = tk.Frame(dashboard, bg="#f7fafd", bd=0, highlightthickness=0)
+    widget_perf.place(x=20, y=160, width=200, height=120)
+    tk.Label(widget_perf, text="Performance Monitor", font=("Segoe UI", 12, "bold"), bg="#f7fafd").pack(anchor="nw", padx=10, pady=8)
+    # ...adiciona indicadores de RAM, CPU...
+
+    # Barra de tarefas flutuante
+    taskbar = tk.Frame(desktop, bg="#f7fafd", bd=0, highlightthickness=0)
+    taskbar.place(relx=0.5, rely=0.97, anchor="s", width=500, height=60)
+
+    # Exemplo de ícones na barra de tarefas
+    for i, icon in enumerate(["Definições.png", "Calculadora.png", "EditorTexto.png", "CodePode.png"]):
         try:
-            icon_img = tk.PhotoImage(file=icon_path)
+            img = tk.PhotoImage(file=os.path.join(ICONES_DIR, icon))
         except Exception:
-            icon_img = None
-        btn = tk.Button(
-            taskbar, image=icon_img, text=app_name, compound="top", bg="#222222", fg="white",
-            font=("Consolas", 9), bd=0,
-            command=lambda: restore_window(app_name)
-        )
-        btn.image = icon_img
-        btn.pack(side="left", padx=5)
-        taskbar_icons[app_name] = btn
-        open_windows[app_name] = win_ref
-
-    def remove_taskbar_icon(app_name):
-        if app_name in taskbar_icons:
-            taskbar_icons[app_name].destroy()
-            del taskbar_icons[app_name]
-        if app_name in open_windows:
-            del open_windows[app_name]
-
-    def restore_window(app_name):
-        win = open_windows.get(app_name)
-        if win:
-            win.deiconify()
-            win.lift()
-            win.focus_force()
-
-    # Exemplo para abrir Definições
-    def open_definicoes_wrapper():
-        win = tk.Toplevel(janela)
-        win.title("Definições")
-        win.protocol("WM_DELETE_WINDOW", lambda: [win.destroy(), remove_taskbar_icon("Definições")])
-        win.iconphoto(True, tk.PhotoImage(file=os.path.join(ICONES_DIR, "Definições.png")))
-        # ...restante código da janela...
-        add_taskbar_icon("Definições", os.path.join(ICONES_DIR, "Definições.png"), win)
-        # Para minimizar, só win.iconify()
-
-    # Repete para Calculadora, EditorTexto, CodePode, etc.
-    # Substitui os comandos dos botões da barra de tarefas para chamar estas wrappers
-
-
-
+            img = None
+        btn = tk.Button(taskbar, image=img, bg="#f7fafd", bd=0, relief="flat")
+        btn.image = img
+        btn.place(x=30 + i*90, y=10, width=40, height=40)
 
     # Adiciona elementos ao desktop (menos a barra de tarefas)
     add_main_labels(desktop)
