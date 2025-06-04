@@ -1,201 +1,164 @@
 import tkinter as tk
-import subprocess
-import sys
 import os
+import sys
 
-# Dynamically add the parent directory of "Programas" to the Python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), ".")))
+from start import open_user_selection
 
-from Programas.Default.Apps.Definições import open_definicoes
-from Programas.Default.Apps.Calculadora import open_calculadora
-from Programas.Default.Apps.EditorTexto import open_editor_texto
-from Programas.Default.Apps.CodePode import open_codepode
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "users", "guest")))
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
-ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")
+try:
+    from Programas.Default.Apps.Definições import open_definicoes
+except ImportError:
+    def open_definicoes(janela): pass
 
-# Guarda as janelas abertas
-open_windows = {}
+try:
+    from Programas.Default.Apps.Calculadora import open_calculadora
+except ImportError:
+    def open_calculadora(janela): pass
+
+try:
+    from Programas.Default.Apps.EditorTexto import open_editor_texto
+except ImportError:
+    def open_editor_texto(janela): pass
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+ICONES_DIR = os.path.join(BASE_DIR, "icones")
+
+janela = tk.Tk()
+janela.title("MIRobots")
+janela.attributes("-fullscreen", True)
+
+def show_splash():
+    splash = tk.Frame(janela, bg="#000080")  # azul escuro retro
+    splash.pack(expand=True, fill="both")
+
+    # Ícone pixelizado (ou texto se não houver)
+    try:
+        icon_image = tk.PhotoImage(file=os.path.join(ICONES_DIR, "iconstart.png"))
+        icon_label = tk.Label(splash, image=icon_image, bg="#000080")
+        icon_label.image = icon_image
+        icon_label.pack(pady=(100, 20))
+    except Exception:
+        icon_label = tk.Label(splash, text="MIRobots", font=("Consolas", 40, "bold"), bg="#000080", fg="#00ff00")
+        icon_label.pack(pady=(100, 20))
+
+    # Spinner retro
+    spinner_label = tk.Label(splash, text="LOADING █▒▒▒▒▒▒▒▒", font=("Consolas", 24), bg="#000080", fg="#00ff00")
+    spinner_label.pack(pady=(20, 0))
+    def animate(step=0):
+        bar = "█" + "▒" * (step % 9) + " " * (8 - (step % 9))
+        spinner_label.config(text=f"LOADING {bar}")
+        splash.after(180, animate, step+1)
+    animate()
+
+    # Texto no canto inferior esquerdo
+    esc_label = tk.Label(
+        splash, text="Press ESC for the Terminal (old school!)", font=("Consolas", 12),
+        bg="#000080", fg="#ff00ff"
+    )
+    esc_label.place(relx=0.01, rely=0.97, anchor="sw")
+
+    def on_esc(event):
+        open_terminal(splash)
+    splash.bind_all("<Escape>", on_esc)
+
+    splash.after(3500, lambda: open_user_selection(janela, splash))
+
+def open_terminal(splash):
+    splash.destroy()
+    terminal = tk.Text(janela, bg="#111", fg="#0f0", insertbackground="#0f0", font=("Consolas", 14), borderwidth=8, relief="ridge")
+    terminal.pack(expand=True, fill="both")
+    direitos = """
+MIRobots DOS Terminal
+(c) 2025 MIRobots Corporation & Pixel Corp.
+Type 'ajuda' for help.
+"""
+    terminal.insert(tk.END, direitos + "\n\n>> ")
+
+    def process_command(event=None):
+        linha = terminal.get("insert linestart", "insert lineend")
+        comando = linha.replace(">> ", "", 1).strip().lower()
+        if not comando:
+            terminal.insert(tk.END, "\n>> ")
+            terminal.see(tk.END)
+            return "break"
+        if comando == "start mirobots":
+            terminal.insert(tk.END, "\nCarregando MIRobots...\n")
+            terminal.see(tk.END)
+            terminal.pack_forget()
+            show_splash()
+        elif comando == "start calculadora":
+            open_calculadora(janela)
+            terminal.insert(tk.END, "\nCalculadora aberta.\n")
+        elif comando == "start editor":
+            open_editor_texto(janela)
+            terminal.insert(tk.END, "\nEditor de texto aberto.\n")
+        elif comando == "start definicoes" or comando == "start definições":
+            open_definicoes(janela)
+            terminal.insert(tk.END, "\nDefinições abertas.\n")
+        elif comando == "limpar":
+            terminal.delete("1.0", tk.END)
+            terminal.insert(tk.END, ">> ")
+        elif comando == "ajuda":
+            terminal.insert(tk.END, """
+Comandos disponíveis:
+start mirobots      - Inicia o ambiente gráfico
+start calculadora   - Abre a calculadora
+start editor        - Abre o editor de texto
+start definicoes    - Abre as definições
+limpar              - Limpa o terminal
+ajuda               - Mostra esta ajuda
+shutdown            - Desliga o computador
+reiniciar           - Reinicia o computador
+""")
+        elif comando == "shutdown":
+            terminal.insert(tk.END, "\nA desligar o computador...\n")
+            terminal.see(tk.END)
+            os.system("shutdown /s /t 0")
+        elif comando == "reiniciar":
+            terminal.insert(tk.END, "\nA reiniciar o computador...\n")
+            terminal.see(tk.END)
+            os.system("shutdown /r /t 0")
+        else:
+            terminal.insert(tk.END, f'\nComando desconhecido: "{comando}". Escreva "ajuda".')
+        terminal.insert(tk.END, "\n>> ")
+        terminal.see(tk.END)
+        return "break"
+
+    terminal.bind("<Return>", process_command)
 
 def open_desktop(janela):
-    print("Iniciando ambiente de utilizador CONVIDADO")
-    # Frame do ambiente de trabalho
-    desktop = tk.Frame(janela, bg="#b3e0ff")
+    # Fundo azul ciano forte
+    desktop = tk.Frame(janela, bg="#00cfff")
     desktop.pack(expand=True, fill="both")
 
-    # Painel central (widgets/dashboard)
-    dashboard = tk.Frame(desktop, bg="white", bd=0, highlightthickness=0)
-    dashboard.place(relx=0.5, rely=0.45, anchor="center", width=700, height=500)
+    # Dashboard quadrado e widgets quadrados
+    dashboard = tk.Frame(desktop, bg="#222", bd=4, relief="groove")
+    dashboard.place(relx=0.5, rely=0.45, anchor="center", width=800, height=400)
 
-    # Exemplo de widget: Fotos
-    widget_photos = tk.Frame(dashboard, bg="#f7fafd", bd=0, highlightthickness=0)
-    widget_photos.place(x=20, y=20, width=200, height=120)
-    tk.Label(widget_photos, text="Photos", font=("Segoe UI", 12, "bold"), bg="#f7fafd").pack(anchor="nw", padx=10, pady=8)
-    # ...adiciona imagens ou thumbnails...
+    # Widgets quadrados, cores fortes
+    widget1 = tk.Frame(dashboard, bg="#ff00ff", bd=2, relief="ridge")
+    widget1.place(x=30, y=30, width=180, height=120)
+    tk.Label(widget1, text="Photos", font=("Consolas", 13, "bold"), bg="#ff00ff", fg="#fff").pack(anchor="nw", padx=10, pady=8)
 
-    # Exemplo de widget: Lembretes
-    widget_reminders = tk.Frame(dashboard, bg="#f7fafd", bd=0, highlightthickness=0)
-    widget_reminders.place(x=240, y=20, width=200, height=120)
-    tk.Label(widget_reminders, text="Reminders", font=("Segoe UI", 12, "bold"), bg="#f7fafd").pack(anchor="nw", padx=10, pady=8)
-    # ...adiciona lembretes...
+    widget2 = tk.Frame(dashboard, bg="#00ffea", bd=2, relief="ridge")
+    widget2.place(x=230, y=30, width=180, height=120)
+    tk.Label(widget2, text="Reminders", font=("Consolas", 13, "bold"), bg="#00ffea", fg="#000").pack(anchor="nw", padx=10, pady=8)
 
-    # Exemplo de widget: Calendário
-    widget_calendar = tk.Frame(dashboard, bg="#f7fafd", bd=0, highlightthickness=0)
-    widget_calendar.place(x=460, y=20, width=220, height=220)
-    tk.Label(widget_calendar, text="Calendar", font=("Segoe UI", 12, "bold"), bg="#f7fafd").pack(anchor="nw", padx=10, pady=8)
-    # ...adiciona calendário...
+    widget3 = tk.Frame(dashboard, bg="#fff700", bd=2, relief="ridge")
+    widget3.place(x=430, y=30, width=180, height=120)
+    tk.Label(widget3, text="Calendar", font=("Consolas", 13, "bold"), bg="#fff700", fg="#000").pack(anchor="nw", padx=10, pady=8)
 
-    # Exemplo de widget: Performance
-    widget_perf = tk.Frame(dashboard, bg="#f7fafd", bd=0, highlightthickness=0)
-    widget_perf.place(x=20, y=160, width=200, height=120)
-    tk.Label(widget_perf, text="Performance Monitor", font=("Segoe UI", 12, "bold"), bg="#f7fafd").pack(anchor="nw", padx=10, pady=8)
-    # ...adiciona indicadores de RAM, CPU...
+    widget4 = tk.Frame(dashboard, bg="#ff5e00", bd=2, relief="ridge")
+    widget4.place(x=630, y=30, width=140, height=120)
+    tk.Label(widget4, text="Performance", font=("Consolas", 13, "bold"), bg="#ff5e00", fg="#fff").pack(anchor="nw", padx=10, pady=8)
 
-    # Barra de tarefas flutuante
-    taskbar = tk.Frame(desktop, bg="#f7fafd", bd=0, highlightthickness=0)
-    taskbar.place(relx=0.5, rely=0.97, anchor="s", width=500, height=60)
+    # Barra de tarefas tipo DOS/retro
+    taskbar = tk.Frame(desktop, bg="#111", height=48, bd=4, relief="ridge")
+    taskbar.pack(side="bottom", fill="x")
+    for i, nome in enumerate(["Definições", "Calc", "Editor", "Code"]):
+        btn = tk.Button(taskbar, text=nome, font=("Consolas", 12, "bold"), bg="#222", fg="#0ff", bd=2, relief="groove", width=12, height=1, cursor="hand2")
+        btn.pack(side="left", padx=8, pady=4)
 
-    # Exemplo de ícones na barra de tarefas
-    for i, icon in enumerate(["Definições.png", "Calculadora.png", "EditorTexto.png", "CodePode.png"]):
-        try:
-            img = tk.PhotoImage(file=os.path.join(ICONES_DIR, icon))
-        except Exception:
-            img = None
-        btn = tk.Button(taskbar, image=img, bg="#f7fafd", bd=0, relief="flat")
-        btn.image = img
-        btn.place(x=30 + i*90, y=10, width=40, height=40)
-
-    # Adiciona elementos ao desktop (menos a barra de tarefas)
-    add_main_labels(desktop)
-
-    # Adiciona botões/ícones à barra de tarefas
-    add_taskbar_icons(taskbar)
-
-def add_main_labels(desktop):
-    # Adiciona os textos principais no desktop
-    label1 = tk.Label(desktop, text="Divirta-se com esta versão!", font=("Consolas", 16, "bold"), 
-                      bg="deepskyblue", fg="magenta")
-    label1.place(x=50, y=50)
-
-    label2 = tk.Label(desktop, text="Mais informações nas Definições", font=("Consolas", 14), 
-                      bg="deepskyblue", fg="blue")
-    label2.place(x=50, y=100)
-
-    label3 = tk.Label(desktop, text="MIROBOTS 1.0\nVer. by Pixel Corporation\nLote 09032024\n2024", 
-                      font=("Consolas", 16, "bold"), bg="deepskyblue", fg="magenta")
-    label3.place(x=400, y=50)
-
-def add_power_button(taskbar):
-    power_img = tk.PhotoImage(file=os.path.join(ICONES_DIR, "Ligar-Desligar.png"))
-    power_button = tk.Button(taskbar, image=power_img, bg="#222222", borderwidth=0,
-                              command=lambda: open_power_options(taskbar.master))
-    power_button.image = power_img  # Mantém a referência para não ser coletada
-    power_button.pack(side="left", padx=10)
-
-def add_taskbar_icons(taskbar):
-    # Botão de power (primeiro)
-    try:
-        power_img = tk.PhotoImage(file=os.path.join(ICONES_DIR, "Ligar-Desligar.png"))
-        power_button = tk.Button(taskbar, image=power_img, bg="#222222", borderwidth=0,
-                                 command=lambda: open_power_options(taskbar.master))
-        power_button.image = power_img
-        power_button.pack(side="left", padx=10)
-    except Exception as e:
-        print(f"Erro ao carregar o ícone de power: {e}")
-
-    # Outros ícones (pesquisa, definições, calculadora, etc.)
-    try:
-        search_img = tk.PhotoImage(file=os.path.join(ICONES_DIR, "Pesquisar.png"))
-        search_button = tk.Button(taskbar, image=search_img, bg="#222222", borderwidth=0,
-                                  command=lambda: open_pesquisa(taskbar.master))
-        search_button.image = search_img
-        search_button.pack(side="left", padx=10)
-    except Exception as e:
-        print(f"Erro ao carregar o ícone de pesquisa: {e}")
-
-    icons = [
-        (os.path.join(ICONES_DIR, "Definições.png"), open_definicoes),
-        (os.path.join(ICONES_DIR, "Calculadora.png"), open_calculadora),
-        (os.path.join(ICONES_DIR, "EditorTexto.png"), open_editor_texto),
-        (os.path.join(ICONES_DIR, "CodePode.png"), open_codepode)
-    ]
-    for icon, command in icons:
-        try:
-            icon_img = tk.PhotoImage(file=icon)
-            icon_button = tk.Button(taskbar, image=icon_img, bg="#222222", borderwidth=0,
-                                     command=lambda cmd=command: cmd(taskbar.master))
-            icon_button.image = icon_img
-            icon_button.pack(side="left", padx=10)
-        except Exception as e:
-            print(f"Erro ao carregar o ícone {icon}: {e}")
-
-def open_power_options(parent):
-    power_win = tk.Toplevel(parent)
-    power_win.title("Opções de Energia")
-    power_win.transient(None)
-    power_win.attributes("-toolwindow", False)
-
-    icon_path = os.path.join(ICONES_DIR, "Ligar-Desligar.png")
-    try:
-        icon_img = tk.PhotoImage(file=icon_path)
-        power_win.iconphoto(True, icon_img)
-        power_win._icon_img = icon_img
-    except Exception as e:
-        print("Erro ao definir o ícone de energia:", e)
-
-    power_win.geometry("320x180+900+300")
-    power_win.config(bg="white")
-
-    label = tk.Label(power_win, text="O que pretende fazer?", font=("Consolas", 16, "bold"), bg="white")
-    label.pack(pady=(20, 10))
-
-    btn_frame = tk.Frame(power_win, bg="white")
-    btn_frame.pack(pady=10)
-
-    def encerrar():
-        power_win.destroy()
-        subprocess.run("shutdown /s /t 0", shell=True)
-
-    def reiniciar():
-        power_win.destroy()
-        subprocess.run("shutdown /r /t 0", shell=True)
-
-    def suspender():
-        power_win.destroy()
-        subprocess.run("rundll32.exe powrprof.dll,SetSuspendState 0,1,0", shell=True)
-
-    btn_encerrar = tk.Button(btn_frame, text="Encerrar", font=("Consolas", 12), width=10, command=encerrar, bg="#ff5555", fg="white")
-    btn_encerrar.grid(row=0, column=0, padx=10)
-
-    btn_reiniciar = tk.Button(btn_frame, text="Reiniciar", font=("Consolas", 12), width=10, command=reiniciar, bg="#ffaa00", fg="white")
-    btn_reiniciar.grid(row=0, column=1, padx=10)
-
-    btn_suspender = tk.Button(btn_frame, text="Suspender", font=("Consolas", 12), width=10, command=suspender, bg="#55aaff", fg="white")
-    btn_suspender.grid(row=0, column=2, padx=10)
-
-    btn_cancelar = tk.Button(power_win, text="Cancelar", font=("Consolas", 12), width=10, command=power_win.destroy)
-    btn_cancelar.pack(pady=10)
-
-def shutdown(option):
-    try:
-        if option == "encerrar":
-            subprocess.run("shutdown /s /t 0", shell=True, check=True)
-        elif option == "suspender":
-            subprocess.run("shutdown /h", shell=True, check=True)
-        elif option == "reiniciar":
-            subprocess.run("shutdown /r /t 0", shell=True, check=True)
-    except Exception as e:
-        print(f"Erro ao executar o comando de energia: {e}")
-
-def open_pesquisa(parent):
-    # Exemplo: abre uma janela de pesquisa (podes adaptar)
-    pesquisa_win = tk.Toplevel(parent)
-    pesquisa_win.title("Pesquisar")
-    pesquisa_win.transient(None)
-    pesquisa_win.attributes("-toolwindow", False)
-
-    pesquisa_win.geometry("300x100+850+200")
-    pesquisa_win.config(bg="white")
-    entry = tk.Entry(pesquisa_win, font=("Consolas", 14))
-    entry.pack(pady=20, padx=20, fill="x")
+show_splash()
+janela.mainloop()
