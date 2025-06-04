@@ -15,6 +15,9 @@ from Programas.Default.Apps.CodePode import open_codepode
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
 ICONES_DIR = os.path.join(BASE_DIR, "Operational System", "icones")
 
+# Guarda as janelas abertas
+open_windows = {}
+
 def open_desktop(janela):
     print("Iniciando ambiente de utilizador CONVIDADO")
     # Frame do ambiente de trabalho
@@ -24,6 +27,57 @@ def open_desktop(janela):
     # Frame da barra de tarefas (em baixo)
     taskbar = tk.Frame(desktop, bg="#222222", height=60)
     taskbar.pack(side="bottom", fill="x")
+
+    # Lista de ícones na barra de tarefas
+    taskbar_icons = {}
+
+    def add_taskbar_icon(app_name, icon_path, win_ref):
+        if app_name in taskbar_icons:
+            return  # Já existe
+        try:
+            icon_img = tk.PhotoImage(file=icon_path)
+        except Exception:
+            icon_img = None
+        btn = tk.Button(
+            taskbar, image=icon_img, text=app_name, compound="top", bg="#222222", fg="white",
+            font=("Consolas", 9), bd=0,
+            command=lambda: restore_window(app_name)
+        )
+        btn.image = icon_img
+        btn.pack(side="left", padx=5)
+        taskbar_icons[app_name] = btn
+        open_windows[app_name] = win_ref
+
+    def remove_taskbar_icon(app_name):
+        if app_name in taskbar_icons:
+            taskbar_icons[app_name].destroy()
+            del taskbar_icons[app_name]
+        if app_name in open_windows:
+            del open_windows[app_name]
+
+    def restore_window(app_name):
+        win = open_windows.get(app_name)
+        if win:
+            win.deiconify()
+            win.lift()
+            win.focus_force()
+
+    # Exemplo para abrir Definições
+    def open_definicoes_wrapper():
+        win = tk.Toplevel(janela)
+        win.title("Definições")
+        win.protocol("WM_DELETE_WINDOW", lambda: [win.destroy(), remove_taskbar_icon("Definições")])
+        win.iconphoto(True, tk.PhotoImage(file=os.path.join(ICONES_DIR, "Definições.png")))
+        # ...restante código da janela...
+        add_taskbar_icon("Definições", os.path.join(ICONES_DIR, "Definições.png"), win)
+        # Para minimizar, só win.iconify()
+
+    # Repete para Calculadora, EditorTexto, CodePode, etc.
+    # Substitui os comandos dos botões da barra de tarefas para chamar estas wrappers
+
+    # Exemplo de botão na barra de tarefas:
+    btn_def = tk.Button(taskbar, text="Definições", command=open_definicoes_wrapper)
+    btn_def.pack(side="left", padx=5)
 
     # Adiciona elementos ao desktop (menos a barra de tarefas)
     add_main_labels(desktop)
