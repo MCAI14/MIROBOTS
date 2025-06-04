@@ -75,9 +75,8 @@ def open_desktop(janela):
     # Repete para Calculadora, EditorTexto, CodePode, etc.
     # Substitui os comandos dos botões da barra de tarefas para chamar estas wrappers
 
-    # Exemplo de botão na barra de tarefas:
-    btn_def = tk.Button(taskbar, text="Definições", command=open_definicoes_wrapper)
-    btn_def.pack(side="left", padx=5)
+
+
 
     # Adiciona elementos ao desktop (menos a barra de tarefas)
     add_main_labels(desktop)
