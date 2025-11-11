@@ -1,0 +1,5 @@
+# Ignore build artifacts
+/new-os/target
+**/target
+**/Cargo.lock
+archive_*

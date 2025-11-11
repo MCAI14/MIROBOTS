@@ -1,0 +1,7 @@
+[package]
+name = "kernel"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Para começar, usamos std; converte para no_std quando estiveres pronto
