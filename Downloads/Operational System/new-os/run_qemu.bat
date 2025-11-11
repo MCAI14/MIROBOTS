@@ -1,9 +1,10 @@
 @echo off
-REM Script placeholder — adaptações são necessárias antes de correr com um kernel real.
-REM Requisitos: QEMU instalado e um kernel ELF adecuado.
+REM Run the build_and_run.sh script inside WSL (recommended)
+REM This batch file will try to call WSL and execute the build script. If you prefer, open WSL and run scripts/build_and_run.sh manually.
 
-REM Exemplo (após teres um kernel ELF compilado):
-REM qemu-system-x86_64 -kernel path\to\kernel.elf -m 512M -nographic
+echo Building and running kernel inside WSL. If you don't have WSL configured, open new-os/scripts/build_and_run.sh in WSL and run it manually.
 
-echo "Script de exemplo criado. Compila o kernel e actualiza este ficheiro com o caminho para o ELF de arranque." 
+REM Attempt to run the build script in WSL
+wsl -e bash -lc "cd '$(wslpath -a "%~dp0")/new-os' || cd '/mnt/c/\Users/$(whoami)/OneDrive/Ambiente de Trabalho/Repositórios/MIROBOTS/Downloads/Operational System/new-os' ; ./scripts/build_and_run.sh"
+
 pause
